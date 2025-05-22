@@ -3,4 +3,4 @@ pandas
 sqlalchemy
 streamlit_option_menu
 pymysql
-"C:\Users\INDIA\Downloads\Ola-Cabs-Logo.png"
+
