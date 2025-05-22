@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-from PIL import Image
 from sqlalchemy import create_engine
 from streamlit_option_menu import option_menu
 
