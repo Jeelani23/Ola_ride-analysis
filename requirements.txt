@@ -3,14 +3,4 @@ pandas
 sqlalchemy
 streamlit_option_menu
 pymysql
-option_menu
-🏠 
-📊 
-🚖
-✅
-💳
-🧾
-🌟
-📌
-❌
-🧰
+
