@@ -3,3 +3,4 @@ pandas
 sqlalchemy
 streamlit_option_menu
 pymysql
+st.image("Ola-Cabs-Logo.png")
