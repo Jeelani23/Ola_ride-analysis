@@ -35,7 +35,6 @@ if select == "🏠 HOME":
         st.link_button("Book Your Ride Now", "https://www.olacabs.com/")
 
     with col2:
-# BUSINESS INSIGHTS PAGE
 elif select == "📊 Business Insights":
     st.subheader("📌 Select a query to analyze:")
 
