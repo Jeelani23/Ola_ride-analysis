@@ -8,7 +8,7 @@ from streamlit_option_menu import option_menu
 def get_engine():
     try:
         # Replace 'your_password' with your actual MySQL root password 
-        engine = create_engine("mysql+pymysql://root:your_password@127.0.0.1/ola")
+        engine = create_engine("mysql+pymysql://root:Jeelani19@127.0.0.1/ola")
         # Test connection
         with engine.connect() as conn:
             pass
