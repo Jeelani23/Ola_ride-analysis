@@ -5,8 +5,7 @@ from streamlit_option_menu import option_menu
 
 
 # Set up database connection
-#engine = create_engine("mysql+pymysql://root:Jeelani19@127.0.0.1/ola")
-conn = st.connection('ola', type='mysql')
+engine = create_engine("mysql+pymysql://root:Jeelani19@127.0.0.1/ola")
 
 # Function to run SQL queries
 def run_query(query):
