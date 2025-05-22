@@ -35,7 +35,7 @@ if select == "🏠 HOME":
         st.link_button("Book Your Ride Now", "https://www.olacabs.com/")
 
     with col2:
-        st.header("Business inights")
+        st.header("Business insights")
         #st.image(Image.open(r"C:\Users\INDIA\Downloads\ola-cabs-01.jpg"), width=600)
 elif select == "📊 Business Insights":
     st.subheader("📌 Select a query to analyze:")
