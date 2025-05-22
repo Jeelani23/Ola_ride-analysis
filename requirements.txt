@@ -3,4 +3,5 @@ pandas
 sqlalchemy
 streamlit_option_menu
 PyMySQL
+pymysql
 PIL
