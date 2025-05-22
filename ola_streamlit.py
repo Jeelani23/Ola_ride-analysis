@@ -1,14 +1,29 @@
 import streamlit as st
 import pandas as pd
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from streamlit_option_menu import option_menu
 
-
 # Set up database connection
-engine = create_engine("mysql+pymysql://root:Jeelani19@127.0.0.1/ola")
+def get_engine():
+    try:
+        # Replace 'your_password' with your actual MySQL root password 
+        engine = create_engine("mysql+pymysql://root:your_password@127.0.0.1/ola")
+        # Test connection
+        with engine.connect() as conn:
+            pass
+        return engine
+    except OperationalError as e:
+        st.error(f"Database connection failed: {e}")
+        return None
 
-# Function to run SQL queries
+engine = get_engine()
+
+# Function to run SQL queries safely
 def run_query(query):
+    if engine is None:
+        st.warning("No database connection.")
+        return pd.DataFrame()
     return pd.read_sql(query, engine)
 
 # Set wide layout and app title
@@ -32,11 +47,13 @@ if select == "🏠 HOME":
         - 🧾 Ride history & invoices
         - 🌟 Driver and rider ratings
         """)
-        st.link_button("Book Your Ride Now", "https://www.olacabs.com/")
+        st.markdown("[Book Your Ride Now](https://www.olacabs.com/)", unsafe_allow_html=True)
 
     with col2:
         st.header("Business insights")
-        #st.image(Image.open(r"C:\Users\INDIA\Downloads\ola-cabs-01.jpg"), width=600)
+        # Add any image or visual here, if needed
+        # Example: st.image("path_to_image.jpg", width=600)
+
 elif select == "📊 Business Insights":
     st.subheader("📌 Select a query to analyze:")
 
@@ -53,10 +70,10 @@ elif select == "📊 Business Insights":
         "10. Incomplete Rides & Reasons"
     ])
 
-    # Each query's logic
     if question == "1. Total Successful Bookings":
         df = run_query("SELECT COUNT(*) AS Successful_Rides FROM ola_data WHERE Booking_Status = 'Success'")
-        st.success(f"✅ Total Successful Rides: **{df.iloc[0]['Successful_Rides']}**")
+        if not df.empty:
+            st.success(f"✅ Total Successful Rides: **{df.iloc[0]['Successful_Rides']}**")
 
     elif question == "2. Avg Ride Distance per Vehicle Type":
         df = run_query("""
@@ -64,11 +81,13 @@ elif select == "📊 Business Insights":
             FROM ola_data WHERE Booking_Status = 'Success'
             GROUP BY Vehicle_Type
         """)
-        st.dataframe(df, use_container_width=True)
+        if not df.empty:
+            st.dataframe(df, use_container_width=True)
 
     elif question == "3. Total Rides Cancelled by Customers":
         df = run_query("SELECT COUNT(*) AS Cancelled_By_Customers FROM ola_data WHERE Booking_Status = 'Canceled by Customer'")
-        st.error(f"❌ Rides Cancelled by Customers: **{df.iloc[0]['Cancelled_By_Customers']}**")
+        if not df.empty:
+            st.error(f"❌ Rides Cancelled by Customers: **{df.iloc[0]['Cancelled_By_Customers']}**")
 
     elif question == "4. Top 5 Customers by Ride Count":
         df = run_query("""
@@ -78,7 +97,8 @@ elif select == "📊 Business Insights":
             ORDER BY Number_Of_Rides DESC
             LIMIT 5
         """)
-        st.dataframe(df, use_container_width=True)
+        if not df.empty:
+            st.dataframe(df, use_container_width=True)
 
     elif question == "5. Number of Rides Cancelled by Drivers (Car/Personal Issues)":
         df = run_query("""
@@ -87,7 +107,8 @@ elif select == "📊 Business Insights":
             WHERE Booking_Status = 'Canceled by Driver'
             AND Canceled_Rides_by_Driver = 'Personal & Car related issue'
         """)
-        st.warning(f"🧰 Driver-Cancelled Rides (Car/Personal): **{df.iloc[0]['Cancelled_By_Drivers']}**")
+        if not df.empty:
+            st.warning(f"🧰 Driver-Cancelled Rides (Car/Personal): **{df.iloc[0]['Cancelled_By_Drivers']}**")
 
     elif question == "6. Prime Sedan Ratings (Max/Min)":
         df = run_query("""
@@ -95,13 +116,15 @@ elif select == "📊 Business Insights":
             FROM ola_data
             WHERE Vehicle_Type = 'Prime Sedan' AND Booking_Status = 'Success'
         """)
-        st.metric("🌟 Max Rating", df.iloc[0]['Max_Rating'])
-        st.metric("🌑 Min Rating", df.iloc[0]['Min_Rating'])
+        if not df.empty:
+            st.metric("🌟 Max Rating", df.iloc[0]['Max_Rating'])
+            st.metric("🌑 Min Rating", df.iloc[0]['Min_Rating'])
 
     elif question == "7. Rides Paid via UPI":
         df = run_query("SELECT * FROM ola_data WHERE Payment_Method = 'UPI'")
-        st.dataframe(df, use_container_width=True)
-        st.success(f"💸 Total UPI Payments: **{len(df)}**")
+        if not df.empty:
+            st.dataframe(df, use_container_width=True)
+            st.success(f"💸 Total UPI Payments: **{len(df)}**")
 
     elif question == "8. Avg Customer Rating by Vehicle Type":
         df = run_query("""
@@ -110,7 +133,8 @@ elif select == "📊 Business Insights":
             WHERE Booking_Status = 'Success'
             GROUP BY Vehicle_Type
         """)
-        st.dataframe(df, use_container_width=True)
+        if not df.empty:
+            st.dataframe(df, use_container_width=True)
 
     elif question == "9. Total Booking Value (Success Only)":
         df = run_query("""
@@ -118,9 +142,12 @@ elif select == "📊 Business Insights":
             FROM ola_data
             WHERE Booking_Status = 'Success'
         """)
-        st.metric("💰 Total Booking Value (₹)", round(df.iloc[0]['Total_Booking_Value'], 2))
+        if not df.empty:
+            st.metric("💰 Total Booking Value (₹)", round(df.iloc[0]['Total_Booking_Value'], 2))
 
     elif question == "10. Incomplete Rides & Reasons":
         df = run_query("SELECT Incomplete_Rides, Incomplete_Rides_Reason FROM ola_data WHERE Incomplete_Rides = 'Yes'")
-        st.dataframe(df, use_container_width=True)
-        st.info(f"🔍 Incomplete Rides: **{len(df)} records found**")
+        if not df.empty:
+            st.dataframe(df, use_container_width=True)
+            st.info(f"🔍 Incomplete Rides: **{len(df)} records found**")
+
