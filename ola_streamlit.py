@@ -18,7 +18,7 @@ st.markdown("<h1 style='text-align: center; color: #336699;'>🚖 OLA RIDE DATA 
 
 # Sidebar menu
 with st.sidebar:
-    st.image(Image.open(r"C:\Users\INDIA\Downloads\Ola-Cabs-Logo.png"), width=200)
+    st.image(Image.open(r"C:\\Users\\INDIA\Downloads\\Ola-Cabs-Logo.png"), width=200)
     select = option_menu("Main Menu", ["🏠 HOME", "📊 Business Insights"])
 
 # HOME PAGE
