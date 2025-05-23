@@ -60,84 +60,79 @@ elif select == "📊 Business Insights":
         "10. Incomplete Rides & Reasons"
     ])
 
-    # Each query's logic
+    def fetch_query(sql):
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        return pd.DataFrame(data, columns=columns)
+
     if question == "1. Total Successful Bookings":
-        cursor.execute("SELECT COUNT(*) AS Successful_Rides FROM ola_data WHERE Booking_Status = 'Success'")
-        df=print(cursor.fetchall())
+        df = fetch_query("SELECT COUNT(*) AS Successful_Rides FROM ola_data WHERE Booking_Status = 'Success'")
         st.success(f"✅ Total Successful Rides: **{df.iloc[0]['Successful_Rides']}**")
 
     elif question == "2. Avg Ride Distance per Vehicle Type":
-        cursor.execute("""
+        df = fetch_query("""
             SELECT Vehicle_Type, ROUND(AVG(Ride_Distance), 2) AS Average_Ride_Distance
             FROM ola_data WHERE Booking_Status = 'Success'
             GROUP BY Vehicle_Type
         """)
-        df=print(cursor.fetchall())
         st.dataframe(df, use_container_width=True)
 
     elif question == "3. Total Rides Cancelled by Customers":
-        cursor.execute("SELECT COUNT(*) AS Cancelled_By_Customers FROM ola_data WHERE Booking_Status = 'Canceled by Customer'")
-        df=print(cursor.fetchall())
+        df = fetch_query("SELECT COUNT(*) AS Cancelled_By_Customers FROM ola_data WHERE Booking_Status = 'Canceled by Customer'")
         st.error(f"❌ Rides Cancelled by Customers: **{df.iloc[0]['Cancelled_By_Customers']}**")
 
     elif question == "4. Top 5 Customers by Ride Count":
-        cursor.execute("""
+        df = fetch_query("""
             SELECT Customer_ID, COUNT(*) AS Number_Of_Rides
             FROM ola_data
             GROUP BY Customer_ID
             ORDER BY Number_Of_Rides DESC
             LIMIT 5
         """)
-        df=print(cursor.fetchall())
         st.dataframe(df, use_container_width=True)
 
     elif question == "5. Number of Rides Cancelled by Drivers (Car/Personal Issues)":
-        cursor.execute("""
+        df = fetch_query("""
             SELECT COUNT(*) AS Cancelled_By_Drivers
             FROM ola_data
             WHERE Booking_Status = 'Canceled by Driver'
             AND Canceled_Rides_by_Driver = 'Personal & Car related issue'
         """)
-        df=print(cursor.fetchall())
         st.warning(f"🧰 Driver-Cancelled Rides (Car/Personal): **{df.iloc[0]['Cancelled_By_Drivers']}**")
 
     elif question == "6. Prime Sedan Ratings (Max/Min)":
-        cursor.execute("""
+        df = fetch_query("""
             SELECT MAX(Driver_Ratings) AS Max_Rating, MIN(Driver_Ratings) AS Min_Rating
             FROM ola_data
             WHERE Vehicle_Type = 'Prime Sedan' AND Booking_Status = 'Success'
         """)
-        df=print(cursor.fetchall())
         st.metric("🌟 Max Rating", df.iloc[0]['Max_Rating'])
         st.metric("🌑 Min Rating", df.iloc[0]['Min_Rating'])
 
     elif question == "7. Rides Paid via UPI":
-        cursor.execute("SELECT * FROM ola_data WHERE Payment_Method = 'UPI'")
-        df=print(cursor.fetchall())
+        df = fetch_query("SELECT * FROM ola_data WHERE Payment_Method = 'UPI'")
         st.dataframe(df, use_container_width=True)
         st.success(f"💸 Total UPI Payments: **{len(df)}**")
 
     elif question == "8. Avg Customer Rating by Vehicle Type":
-        cursor.execute("""
+        df = fetch_query("""
             SELECT Vehicle_Type, ROUND(AVG(Customer_Rating), 2) AS Avg_Customer_Rating
             FROM ola_data
             WHERE Booking_Status = 'Success'
             GROUP BY Vehicle_Type
         """)
-        df=print(cursor.fetchall())
         st.dataframe(df, use_container_width=True)
 
     elif question == "9. Total Booking Value (Success Only)":
-        cursor.execute("""
+        df = fetch_query("""
             SELECT SUM(Booking_Value) AS Total_Booking_Value
             FROM ola_data
             WHERE Booking_Status = 'Success'
         """)
-        df=print(cursor.fetchall())
         st.metric("💰 Total Booking Value (₹)", round(df.iloc[0]['Total_Booking_Value'], 2))
 
     elif question == "10. Incomplete Rides & Reasons":
-        cursor.execute("SELECT Incomplete_Rides, Incomplete_Rides_Reason FROM ola_data WHERE Incomplete_Rides = 'Yes'")
-        df=print(cursor.fetchall())
+        df = fetch_query("SELECT Incomplete_Rides, Incomplete_Rides_Reason FROM ola_data WHERE Incomplete_Rides = 'Yes'")
         st.dataframe(df, use_container_width=True)
         st.info(f"🔍 Incomplete Rides: **{len(df)} records found**")
