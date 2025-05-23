@@ -8,7 +8,18 @@ import pymysql
 # Set up database connection
 #engine = create_engine("mysql+pymysql://root:Jeelani19@127.0.0.1/ola")
 
-mydb = pymysql.connect(user='root', password='Jeelani19', host='127.0.0.1', database="ola")
+import pandas as pd
+from sqlalchemy import create_engine
+
+# Load your CSV
+df = pd.read_csv("ola_data.csv")
+
+# Replace with Railway DB credentials
+engine = create_engine("mysql+pymysql://root:ZafVFjlLcsJZwtDHwaXYdSwUEqZMreAC@caboose.proxy.rlwy.net:42869/railway")
+
+# Upload the table
+df.to_sql("ola_data", con=engine, if_exists='replace', index=False)
+
 
 cursor=mydb.cursor()
 
