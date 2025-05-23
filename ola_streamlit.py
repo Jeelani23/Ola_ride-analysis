@@ -18,7 +18,6 @@ st.markdown("<h1 style='text-align: center; color: #336699;'>🚖 OLA RIDE DATA 
 
 # Sidebar menu
 with st.sidebar:
-    #st.image(Image.open(r"C:\Users\INDIA\Downloads\Ola-Cabs-Logo.png"), width=200)
     st.image(Image.open("Ola-Cabs-Logo.png"), width=200)
     select = option_menu("Main Menu", ["🏠 HOME", "📊 Business Insights"])
 
@@ -38,7 +37,6 @@ if select == "🏠 HOME":
         st.link_button("Book Your Ride Now", "https://www.olacabs.com/")
 
     with col2:
-        #st.image(Image.open(r"C:\Users\INDIA\Downloads\ola-cabs-01.jpg"), width=600)
         st.image(Image.open("ola-cabs-01.jpg"), width=200)
 # BUSINESS INSIGHTS PAGE
 elif select == "📊 Business Insights":
