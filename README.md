@@ -12,4 +12,4 @@ Objectives: Enhance business efficiency, optimize user experience, and drive str
 
 
 
-#stream lit link ; http://localhost:8501/
+#stream lit link : (https://ola-ride.onrender.com)
